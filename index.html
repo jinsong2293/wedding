@@ -19,29 +19,18 @@
       --gradient-end: #f8bbd0; /* Light Pink */
     }
 
-    html, body {
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      width: 100%;
-      box-sizing: border-box;
-      background-color: var(--gradient-end);
-    }
-
-    body {
-      /* Use the newer svh to avoid mobile browser ui resize issues and ensure full coverage */
-      min-height: 100svh;
       background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-      background-size: cover;
-      background-repeat: no-repeat;
-      /* Avoid background-attachment: fixed on mobile (can cause white gaps in some browsers).
-         Using svh + cover gives more consistent results. */
+      background-size: 200% 200%;
       animation: backgroundPan 20s ease infinite;
       font-family: 'Quicksand', sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow-x: hidden; /* allow vertical scrolling if needed */
+      min-height: 100vh;
+      overflow: hidden;
       color: var(--text-color-dark);
     }
 @keyframes slideUpFadeIn {

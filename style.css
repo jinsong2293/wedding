@@ -1,9 +1,3 @@
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         :root {
             --primary-color: #e91e63; /* Vibrant Pink */
             --secondary-color: #c2185b; /* Darker Pink */
@@ -23,24 +17,13 @@
             --modal-bg: #fff8f9; /* Very light pink for modal */
         }
 
-        html {
-            height: -webkit-fill-available;
-        }
-        
         body {
-            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end)) fixed;
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
             font-family: 'Quicksand', sans-serif;
             scroll-behavior: smooth;
             position: relative;
             overflow-x: hidden;
             color: var(--text-color-dark);
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
         }
         h1, h2 {
             font-family: 'Dancing Script', cursive;
