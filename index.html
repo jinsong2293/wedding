@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <!-- Thêm viewport meta tag để responsive trên mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thiệp Mời Cưới</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --primary-color: #e91e63; /* Vibrant Pink */
+      --secondary-color: #c2185b; /* Darker Pink */
+      --text-color-dark: #333333;
+      --text-color-light: #666666;
+      --card-bg: #ffffff;
+      --gradient-start: #fce4ec; /* Lightest Pink */
+      --gradient-end: #f8bbd0; /* Light Pink */
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+      background-size: 200% 200%;
+      animation: backgroundPan 20s ease infinite;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text-color-dark);
+    }
+@keyframes slideUpFadeIn {
+  0% {
+    transform: translateY(80px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes backgroundPan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+    .card {
+      width: 90%;
+      max-width: 380px; /* Slightly wider */
+      background: var(--card-bg);
+      border-radius: 25px; /* Softer corners */
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1); /* More refined shadow */
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.6s ease, opacity 0.6s ease, box-shadow 0.3s ease;
+      position: relative;
+      margin: 20px 0;
+      animation: slideUpFadeIn 1.5s ease-out forwards;
+transform: scale(0.95); /* Initial slight scale for animation */
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02); /* More pronounced lift and scale on hover */
+      box-shadow: 0 18px 35px rgba(0,0,0,0.25), 0 8px 15px rgba(0,0,0,0.18); /* Stronger shadow on hover */
+    }
+
+    .card.clicked {
+      opacity: 0;
+      transform: scale(0.9);
+      /* Đảm bảo thẻ biến mất hoàn toàn và không còn tương tác */
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 30vh;
+      max-height: 180px;
+      background-image: url('images/image1.jpg'); /* Sử dụng ảnh từ thư mục images */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      opacity: 0.5; /* Increased opacity for more prominence */
+      border-radius: 25px 25px 0 0;
+    }
+
+    .card-content {
+      padding: 20vh 20px 30px 20px; /* Adjusted padding top */
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      color: var(--primary-color);
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .names {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+      color: var(--secondary-color);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .date {
+      font-size: 1.1rem; /* Slightly larger */
+      color: var(--text-color-light);
+      font-style: normal; /* Remove italic */
+      font-weight: 500;
+      margin-top: 5px;
+    }
+
+    .heart {
+      font-size: 2.5rem; /* Larger heart */
+      animation: pulse 1.5s infinite;
+      margin-top: 25px;
+      color: var(--primary-color); /* Use primary color */
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    .container {
+      text-align: center;
+      padding: 20px; /* Giảm padding cho mobile */
+      position: relative;
+      z-index: 1;
+    }
+    
+    .flower {
+      position: absolute;
+      font-size: 20px;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 0;
+      filter: blur(0.5px); /* Subtle blur for depth */
+    }
+    
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+
+    /* Media queries cho màn hình nhỏ hơn */
+    @media (max-width: 480px) {
+      .card {
+        width: 95%; /* Chiếm gần hết chiều rộng màn hình */
+      }
+      
+      .card-content {
+        padding: 22vh 15px 20px 15px; /* Điều chỉnh padding cho mobile */
+      }
+      
+      .title {
+        font-size: 1.8rem; /* Giảm kích thước font */
+      }
+      
+      .names {
+        font-size: 1.4rem; /* Giảm kích thước font */
+      }
+      
+      .date {
+        font-size: 0.9rem; /* Giảm kích thước font */
+      }
+      
+      .heart {
+        font-size: 1.8rem; /* Giảm kích thước font */
+      }
+    }
+
+    /* CSS cho hiệu ứng chuyển trang "chữ hỷ lớn" */
+    .transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 10000;
+      transition: opacity 0.5s ease-out; /* Increased transition duration for smoother fade */
+    }
+
+    .transition-overlay.active {
+      opacity: 1;
+      pointer-events: auto; /* Kích hoạt lại sự kiện chuột khi active */
+    }
+
+    .overlay-half {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background-color: #f8e0e6; /* A slightly deeper, more refined pink for the overlay */
+      transition: transform 1.2s cubic-bezier(0.65, 0.05, 0.36, 1); /* Smoother cubic-bezier transition */
+    }
+
+    .overlay-half.left {
+      left: 0;
+      transform: translateX(-100%); /* Ban đầu ẩn sang trái */
+    }
+
+    .overlay-half.right {
+      right: 0;
+      transform: translateX(100%); /* Ban đầu ẩn sang phải */
+    }
+
+    .transition-overlay.active .overlay-half.left {
+      transform: translateX(0); /* Kéo vào giữa */
+    }
+
+    .transition-overlay.active .overlay-half.right {
+      transform: translateX(0); /* Kéo vào giữa */
+    }
+
+    .transition-overlay.active .overlay-half.left.slide-out {
+      transform: translateX(-100%); /* Kéo ra ngoài sau khi hiển thị */
+    }
+
+    .transition-overlay.active .overlay-half.right.slide-out {
+      transform: translateX(100%); /* Kéo ra ngoài sau khi hiển thị */
+    }
+
+    .overlay-text {
+      position: absolute;
+      font-family: 'Dancing Script', cursive;
+      font-size: 15vw;
+      color: var(--primary-color);
+      opacity: 0;
+      transform: scale(0.5) rotateY(90deg);
+      transition: opacity 0.8s ease-out 0.8s, transform 0.8s ease-out 0.8s;
+      z-index: 10000;
+    }
+
+    .transition-overlay.active .overlay-text {
+      opacity: 1;
+      transform: scale(1) rotateY(0deg); /* Xoay về 0 khi active */
+    }
+
+    .transition-overlay.active .overlay-text.fade-out {
+      opacity: 0;
+      transform: scale(1.5) rotateY(-90deg); /* Xoay ngược lại khi mờ dần */
+    }
+
+    /* Media queries cho màn hình nhỏ hơn */
+    @media (max-width: 480px) {
+      .card {
+        width: 95%; /* Chiếm gần hết chiều rộng màn hình */
+      }
+      
+      .card-content {
+        padding: 22vh 15px 20px 15px; /* Điều chỉnh padding cho mobile */
+      }
+      
+      .title {
+        font-size: 1.8rem; /* Giảm kích thước font */
+      }
+      
+      .names {
+        font-size: 1.4rem; /* Giảm kích thước font */
+      }
+      
+      .date {
+        font-size: 0.9rem; /* Giảm kích thước font */
+      }
+      
+      .heart {
+        font-size: 1.8rem; /* Giảm kích thước font */
+      }
+
+      .overlay-text {
+        font-size: 25vw; /* Kích thước lớn hơn trên mobile */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" onclick="openCard()">
+    <div class="card-content">
+      <div class="title">Thiệp Cưới</div>
+      <div class="names">Cẩm Sung & Bảo Anh</div>
+      <div class="date">06/12/2025</div>
+      <p class="invitation-text">Trân trọng kính mời bạn đến chung vui ngày trọng đại của chúng tôi! 🌸🎉</p>
+      <div class="heart">💖</div>
+    </div>
+  </div>
+
+  <style>
+    .invitation-text {
+      font-size: 1.05rem; /* Slightly larger font size */
+      color: var(--text-color-dark);
+      margin-top: 18px; /* Increased margin top */
+      line-height: 1.7; /* Improved line height for readability */
+      padding: 0 20px; /* Increased horizontal padding */
+      font-weight: 400;
+    }
+  </style>
+
+  <div class="transition-overlay" id="transitionOverlay">
+    <div class="overlay-half left"></div>
+    <div class="overlay-half right"></div>
+    <div class="overlay-text">囍</div>
+  </div>
+
+  <script>
+    function openCard() {
+      const card = document.querySelector('.card');
+      card.classList.add('clicked'); // Giữ hiệu ứng thu nhỏ của thẻ
+      
+      const overlay = document.getElementById('transitionOverlay');
+      const overlayLeft = overlay.querySelector('.overlay-half.left');
+      const overlayRight = overlay.querySelector('.overlay-half.right');
+      const overlayText = overlay.querySelector('.overlay-text');
+
+      overlay.classList.add('active'); // Kích hoạt hiệu ứng chuyển trang
+      overlayLeft.classList.remove('slide-out'); // Đảm bảo không có slide-out ban đầu
+      overlayRight.classList.remove('slide-out');
+      overlayText.classList.remove('fade-out');
+
+      // Sau khi overlay kéo vào, chữ Hỷ xuất hiện
+      setTimeout(() => {
+        // Sau đó, chữ Hỷ mờ dần và overlay kéo ra
+        overlayText.classList.add('fade-out');
+        overlayLeft.classList.add('slide-out');
+        overlayRight.classList.add('slide-out');
+      }, 2000); // Adjusted to match new CSS transition timings (1.2s pull in + 0.8s text appear)
+
+      // Chuyển trang sau khi toàn bộ hiệu ứng hoàn tất
+      setTimeout(() => {
+        window.location.href = 'wedding (1).html';
+      }, 3500); // Total animation time: 1.2s (pull in) + 0.8s (text appear) + 0.8s (text fade out) + 0.7s (slide out) = ~3.5s
+    }
+    
+    function createFlower() {
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      const emojis = ['🌸', '💖', '✨']; // More varied emojis
+      flower.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+      flower.style.left = Math.random() * 100 + 'vw';
+      flower.style.animationDuration = Math.random() * 7 + 5 + 's'; // Longer, more varied duration
+      flower.style.animationDelay = Math.random() * 2 + 's'; // Random delay for staggered fall
+      flower.style.opacity = Math.random() * 0.6 + 0.4; // Varied opacity
+      flower.style.fontSize = Math.random() * 15 + 15 + 'px'; // Varied size
+      document.body.appendChild(flower);
+      setTimeout(() => flower.remove(), 12000); // Longer removal time
+    }
+
+    // Create flowers at intervals
+    setInterval(createFlower, 500); // More frequent flowers
+  </script>
+</body>
+</html>

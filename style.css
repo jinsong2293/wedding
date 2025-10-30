@@ -1,0 +1,437 @@
+        :root {
+            --primary-color: #e91e63; /* Vibrant Pink */
+            --secondary-color: #c2185b; /* Darker Pink */
+            --text-color-dark: #333333;
+            --text-color-light: #666666;
+            --card-bg: #ffffff;
+            --gradient-start: #fce4ec; /* Lightest Pink */
+            --gradient-end: #f8bbd0; /* Light Pink */
+
+            /* New variables for wedding (1).html */
+            --accent-color: var(--primary-color);
+            --heading-color: var(--secondary-color);
+            --button-bg-start: var(--primary-color);
+            --button-bg-end: #ff4081; /* Slightly lighter primary for gradient */
+            --button-hover-start: var(--secondary-color);
+            --button-hover-end: #e0407f; /* Slightly lighter secondary for gradient */
+            --modal-bg: #fff8f9; /* Very light pink for modal */
+        }
+
+        body {
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+            font-family: 'Quicksand', sans-serif;
+            scroll-behavior: smooth;
+            position: relative;
+            overflow-x: hidden;
+            color: var(--text-color-dark);
+        }
+        h1, h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--heading-color);
+        }
+        h3 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--heading-color);
+        }
+        /* Điều chỉnh màu sắc cho các phần tử khác */
+        .text-pink-600, .text-red-600 { /* Thay thế màu hồng đậm và đỏ */
+            color: var(--accent-color);
+        }
+        .text-gray-500 {
+            color: var(--text-color-light);
+        }
+        .text-gray-600 {
+            color: var(--text-color-dark);
+        }
+        canvas#snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 1s ease-out forwards;
+        }
+        @keyframes slideInLeft {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(30px);
+            animation: slideInRight 1s ease-out forwards;
+        }
+        @keyframes slideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .google-map {
+            padding-bottom: 75%;
+            position: relative;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .google-map iframe {
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+            border: 0;
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .directions-button, .rsvp-button {
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
+            border: none;
+        }
+        @media (min-width: 640px) {
+            .directions-button, .rsvp-button {
+                font-size: 1.125rem;
+            }
+            .directions-button:hover, .rsvp-button:hover {
+                transform: scale(1.05);
+                background: linear-gradient(to right, var(--button-hover-start), var(--button-hover-end));
+            }
+        }
+        /* Removed duplicate media query for hover effect */
+        .photo {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        @media (min-width: 640px) {
+            .photo:hover {
+                transform: scale(1.05) rotate(2deg);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+        }
+        #rsvp-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        #rsvp-modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--modal-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-out;
+            border: 1px solid rgba(233, 30, 99, 0.2); /* Use primary-color for subtle border */
+        }
+        .modal-content input, .modal-content button {
+            font-size: 1.05rem; /* Slightly larger font */
+            padding: 0.85rem; /* Increased padding */
+        }
+        /* .countdown đã được thay thế bằng .countdown-container và .countdown-box ở dưới */
+        /* Giữ lại để tránh lỗi nếu có tham chiếu cũ, nhưng sẽ không ảnh hưởng */
+        /* .countdown has been replaced by .countdown-container and .countdown-box below */
+        /* Keeping this for old references, but it won't affect anything */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @media (min-width: 640px) {
+            .countdown {
+                font-size: 1.125rem;
+            }
+        }
+        /* Removed duplicate body style */
+        .music-control {
+            font-size: 24px;
+            cursor: pointer;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .music-control:hover {
+            color: #ff6f61;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header, .info, .countdown, .event-details, .location, .gallery, .rsvp, .footer {
+            margin: 20px 0;
+        }
+        .rsvp {
+            margin-bottom: 100px; /* Add margin to prevent overlap with footer */
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(to right, var(--button-hover-start), var(--button-hover-end));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        form {
+            display: block;
+            margin-top: 20px;
+        }
+        form.active {
+            display: block;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+        }
+        /* Đóng khối style bị lỗi */
+        /* Gallery Style */
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    min-height: 200px; /* Chiều cao tối thiểu để tránh giật layout */
+}
+
+.gallery-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Hiệu ứng easing mượt */
+    will-change: opacity; /* Tối ưu hiệu năng */
+}
+.gallery-fade-out {
+    opacity: 0 !important;
+}
+
+.gallery-fade-in {
+    opacity: 1 !important;
+}
+.gallery-thumbnail {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px; /* Bo tròn góc nhiều hơn */
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt hơn */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Đổ bóng nhẹ nhàng hơn */
+}
+
+.gallery-thumbnail:hover {
+    transform: scale(1.08) rotate(2deg); /* Phóng to và xoay nhẹ khi hover */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); /* Đổ bóng rõ hơn khi hover */
+}
+
+/* Modal Style */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-image {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 8px;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+}
+@media (max-width: 600px) {
+    .gallery-thumbnail {
+        width: 90px; /* Giảm kích thước trên mobile */
+        height: 67px; /* Giữ tỷ lệ 4:3 */
+        border-radius: 6px;
+    }
+}
+.family-info {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--text-color-light);
+    line-height: 1.6;
+}
+
+.family-name {
+    font-weight: 500;
+    color: var(--text-color-dark);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.family-title {
+    font-size: 1.1rem;
+    color: var(--heading-color);
+    margin-bottom: 0.5rem;
+}
+/* Hiệu ứng mờ khi chuyển ảnh */
+/* Đã có định nghĩa .gallery-row ở trên, loại bỏ trùng lặp */
+/* .gallery-row {
+    transition: opacity 0.5s ease;
+} */
+
+/* Modal phóng to */
+/* Đã có định nghĩa .modal-overlay ở trên, loại bỏ trùng lặp */
+/* .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+} */
+
+.modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    animation: fadeIn 0.3s;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+ .countdown-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .countdown-box {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(233, 30, 99, 0.3); /* Use primary-color for border */
+        border-radius: 12px;
+        padding: 1.2rem 0.8rem;
+        min-width: 80px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+    
+    .countdown-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(233, 30, 99, 0.2); /* Use primary-color for hover shadow */
+        border-color: rgba(233, 30, 99, 0.5); /* Use primary-color for hover border */
+    }
+    
+    .countdown-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        line-height: 1;
+        margin-bottom: 0.3rem;
+        font-family: 'Dancing Script', cursive;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .countdown-label {
+        font-size: 0.9rem;
+        color: var(--text-color-light);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 640px) {
+        .countdown-box {
+            min-width: 70px;
+            padding: 1rem 0.6rem;
+        }
+        
+        .countdown-value {
+            font-size: 1.8rem;
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Removed flower animation from style.css as it's handled in index.html script */

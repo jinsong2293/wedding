@@ -1,0 +1,899 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Mời Cưới</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e91e63; /* Vibrant Pink */
+            --secondary-color: #c2185b; /* Darker Pink */
+            --text-color-dark: #333333;
+            --text-color-light: #666666;
+            --card-bg: #ffffff;
+            --gradient-start: #fce4ec; /* Lightest Pink */
+            --gradient-end: #f8bbd0; /* Light Pink */
+
+            --accent-color: var(--primary-color);
+            --heading-color: var(--secondary-color);
+            --button-bg-start: var(--primary-color);
+            --button-bg-end: #ff4081; /* Slightly lighter primary for gradient */
+            --button-hover-start: var(--secondary-color);
+            --button-hover-end: #e0407f; /* Slightly lighter secondary for gradient */
+            --modal-bg: #fff8f9; /* Very light pink for modal */
+        }
+
+        body {
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+            font-family: 'Quicksand', sans-serif;
+            scroll-behavior: smooth;
+            position: relative;
+            overflow-x: hidden;
+            color: var(--text-color-dark);
+        }
+        h1, h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--heading-color);
+        }
+        h3 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--heading-color);
+        }
+        /* Điều chỉnh màu sắc cho các phần tử khác */
+        .text-pink-600, .text-red-600 {
+            color: var(--accent-color);
+        }
+        .text-gray-500 {
+            color: var(--text-color-light);
+        }
+        .text-gray-600 {
+            color: var(--text-color-dark);
+        }
+        canvas#snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 1s ease-out forwards;
+        }
+        @keyframes slideInLeft {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(30px);
+            animation: slideInRight 1s ease-out forwards;
+        }
+        @keyframes slideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .google-map {
+            padding-bottom: 75%;
+            position: relative;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .google-map iframe {
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+            border: 0;
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .directions-button, .rsvp-button {
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
+            border: none;
+        }
+        @media (min-width: 640px) {
+            .directions-button, .rsvp-button {
+                font-size: 1.125rem;
+            }
+            .directions-button:hover, .rsvp-button:hover {
+                transform: scale(1.05);
+                background: linear-gradient(to right, var(--button-hover-start), var(--button-hover-end));
+            }
+        }
+        /* Removed duplicate media query for hover effect */
+        .photo {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        @media (min-width: 640px) {
+            .photo:hover {
+                transform: scale(1.05) rotate(2deg);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+        }
+        #rsvp-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        #rsvp-modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--modal-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-out;
+            border: 1px solid rgba(233, 30, 99, 0.2); /* Use primary-color for subtle border */
+        }
+        .modal-content input, .modal-content button {
+            font-size: 1.05rem; /* Slightly larger font */
+            padding: 0.85rem; /* Increased padding */
+        }
+        /* .countdown đã được thay thế bằng .countdown-container và .countdown-box ở dưới */
+        /* Giữ lại để tránh lỗi nếu có tham chiếu cũ, nhưng sẽ không ảnh hưởng */
+        /* .countdown has been replaced by .countdown-container and .countdown-box below */
+        /* Keeping this for old references, but it won't affect anything */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @media (min-width: 640px) {
+            .countdown {
+                font-size: 1.125rem;
+            }
+        }
+        /* Removed duplicate body style */
+        .music-control {
+            font-size: 24px;
+            cursor: pointer;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .music-control:hover {
+            color: #ff6f61;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header, .info, .countdown, .event-details, .location, .gallery, .rsvp, .footer {
+            margin: 20px 0;
+        }
+        .rsvp {
+            margin-bottom: 100px; /* Add margin to prevent overlap with footer */
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(to right, var(--button-hover-start), var(--button-hover-end));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        form {
+            display: block;
+            margin-top: 20px;
+        }
+        form.active {
+            display: block;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+        }
+        /* Đóng khối style bị lỗi */
+        /* Gallery Style */
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    min-height: 200px; /* Chiều cao tối thiểu để tránh giật layout */
+}
+
+.gallery-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Hiệu ứng easing mượt */
+    will-change: opacity; /* Tối ưu hiệu năng */
+}
+.gallery-fade-out {
+    opacity: 0 !important;
+}
+
+.gallery-fade-in {
+    opacity: 1 !important;
+}
+.gallery-thumbnail {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px; /* Bo tròn góc nhiều hơn */
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt hơn */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Đổ bóng nhẹ nhàng hơn */
+}
+
+.gallery-thumbnail:hover {
+    transform: scale(1.08) rotate(2deg); /* Phóng to và xoay nhẹ khi hover */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); /* Đổ bóng rõ hơn khi hover */
+}
+
+/* Modal Style */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-image {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 8px;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+}
+@media (max-width: 600px) {
+    .gallery-thumbnail {
+        width: 90px; /* Giảm kích thước trên mobile */
+        height: 67px; /* Giữ tỷ lệ 4:3 */
+        border-radius: 6px;
+    }
+}
+.family-info {
+    font-family: 'Quicksand', sans-serif;
+    color: var(--text-color-light);
+    line-height: 1.6;
+}
+
+.family-name {
+    font-weight: 500;
+    color: var(--text-color-dark);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.family-title {
+    font-size: 1.1rem;
+    color: var(--heading-color);
+    margin-bottom: 0.5rem;
+}
+/* Hiệu ứng mờ khi chuyển ảnh */
+/* Đã có định nghĩa .gallery-row ở trên, loại bỏ trùng lặp */
+/* .gallery-row {
+    transition: opacity 0.5s ease;
+} */
+
+/* Modal phóng to */
+/* Đã có định nghĩa .modal-overlay ở trên, loại bỏ trùng lặp */
+/* .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+} */
+
+.modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    animation: fadeIn 0.3s;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+ .countdown-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .countdown-box {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(181, 131, 141, 0.3); /* Use primary-color for border */
+        border-radius: 12px;
+        padding: 1.2rem 0.8rem;
+        min-width: 80px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+    
+    .countdown-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(181, 131, 141, 0.2); /* Use primary-color for hover shadow */
+        border-color: rgba(181, 131, 141, 0.5); /* Use primary-color for hover border */
+    }
+    
+    .countdown-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        line-height: 1;
+        margin-bottom: 0.3rem;
+        font-family: 'Dancing Script', cursive;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .countdown-label {
+        font-size: 0.9rem;
+        color: var(--text-color-light);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 640px) {
+        .countdown-box {
+            min-width: 70px;
+            padding: 1rem 0.6rem;
+        }
+        
+        .countdown-value {
+            font-size: 1.8rem;
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <canvas id="snow"></canvas>
+    <div class="container mx-auto p-4 sm:p-6">
+        <section class="text-center mb-8 fade-in">
+            <h1 class="text-4xl sm:text-5xl font-bold" style="color: var(--heading-color);">Thiệp Mời Cưới</h1>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 0.3s;">
+            <h2 class="text-3xl sm:text-4xl font-semibold" style="color: var(--heading-color);">Lê Cẩm Sung <span style="color: var(--accent-color);">❤</span> Lai Phương Bảo Anh</h2>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Nhà Trai -->
+            <div class="bg-white p-6 rounded-lg shadow-lg fade-in" style="animation-delay: 0.6s;">
+                <h3 class="text-2xl font-bold text-center" style="color: var(--heading-color);">Nhà Trai</h3>
+                
+                <div class="text-center space-y-4 family-info">
+                    <div>
+                        <p class="text-lg font-medium leading-tight">Ông: Lê Vĩ Anh</p>
+                        <p class="text-lg font-medium leading-tight">Bà: Huỳnh Ngọc Muổi</p>
+                        <p class="text-sm" style="color: var(--text-color-light);">Cha Mẹ</p>
+                    </div>
+                    
+                    <div class="border-t pt-4" style="border-color: var(--gradient-end);">
+                        <p class="text-xl font-semibold">Lê Cẩm Sung</p>
+                        <p class="text-sm" style="color: var(--text-color-light);">Út Nam</p>
+                    </div>
+                    
+                    <div class="border-t pt-4" style="border-color: var(--gradient-end);">
+                        <p style="color: var(--text-color-light);" class="leading-snug">
+                            301/27 Đường Kênh Tân Hóa,<br>
+                            Hòa Thạnh, Tân Phú,<br>
+                            TP.HCM
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nhà Gái -->
+            <div class="bg-white p-6 rounded-lg shadow-lg fade-in" style="animation-delay: 0.9s;">
+                <h3 class="text-2xl font-bold text-center" style="color: var(--heading-color);">Nhà Gái</h3>
+                
+                <div class="text-center space-y-4 family-info">
+                    <div>
+                        <p class="text-lg font-medium leading-tight">Ông: Lai Văn Trung</p>
+                        <p class="text-lg font-medium leading-tight">Bà: Trương Thị Phương</p>
+                        <p class="text-sm" style="color: var(--text-color-light);">Cha Mẹ</p>
+                    </div>
+                    
+                    <div class="border-t pt-4" style="border-color: var(--gradient-end);">
+                        <p class="text-xl font-semibold">Lai Phương Bảo Anh</p>
+                        <p class="text-sm" style="color: var(--text-color-light);">Út Nữ</p>
+                    </div>
+                    
+                    <div class="border-t pt-4" style="border-color: var(--gradient-end);">
+                        <p style="color: var(--text-color-light);" class="leading-snug">
+                            10/10 Tân Lập,<br>
+                            Đông Hòa, Dĩ An,<br>
+                            Bình Dương
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 1.2s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--heading-color);">Kính mời quý khách đến dự lễ thành hôn của chúng tôi</h2>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 1.5s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--heading-color);">Đếm ngược đến ngày trọng đại</h2>
+            <p class="text-base sm:text-xl mb-6" style="color: var(--text-color-dark);">06 tháng 12 năm 2025</p>
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <div class="countdown-value" id="days">0</div>
+                    <div class="countdown-label">Ngày</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="hours">0</div>
+                    <div class="countdown-label">Giờ</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="minutes">0</div>
+                    <div class="countdown-label">Phút</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="seconds">0</div>
+                    <div class="countdown-label">Giây</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 fade-in" style="animation-delay: 1.8s;">
+            <div class="text-center">
+                <span class="text-4xl sm:text-5xl" style="color: var(--accent-color);">🕒</span> <!-- Biểu tượng đồng hồ -->
+                <p class="font-semibold text-base sm:text-lg" style="color: var(--text-color-dark);">Đón khách</p>
+                <p class="text-base sm:text-lg" style="color: var(--text-color-light);">18:00</p>
+            </div>
+            <div class="text-center">
+                <span class="text-4xl sm:text-5xl" style="color: var(--accent-color);">🥂</span> <!-- Biểu tượng ly rượu -->
+                <p class="font-semibold text-base sm:text-lg" style="color: var(--text-color-dark);">Nhập tiệc</p>
+                <p class="text-base sm:text-lg" style="color: var(--text-color-light);">19:00</p>
+            </div>
+            <div class="flex flex-col items-center -mt-1">
+                <img src="calendar.png" alt="Lịch ngày cưới" class="w-14 sm:w-16 mb-1" /> <!-- Tăng kích thước ảnh lịch -->
+                <p class="font-semibold text-sm sm:text-base leading-tight" style="color: var(--text-color-dark);">Ngày</p>
+                <p class="text-sm sm:text-base leading-tight" style="color: var(--text-color-light);">06/12/2025</p>
+            </div>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 2.1s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--heading-color);">Thông tin lễ cưới</h2>
+            <p class="text-base sm:text-lg" style="color: var(--text-color-dark);">Hôn lễ được tổ chức tại:</p>
+            <p class="font-semibold text-base sm:text-lg" style="color: var(--text-color-light);">Diamond Place II</p>
+            <p class="text-base sm:text-lg" style="color: var(--text-color-light);">584 Đ. Âu Cơ, Phường 10, Tân Bình, Hồ Chí Minh</p>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 2.4s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-884a3b">Địa điểm tổ chức</h2>
+            <div class="google-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.630013287552!2d106.63298331474894!3d10.786521392319!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ed23c8077d3%3A0x7a6a9c89b0b9f7e4!2sDiamond%20Place%20II!5e0!3m2!1svi!2s!4v1698765432109"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination_place_id=ChIJ03cIHO0tCjER5Pe5sIl6ano&destination=584+Au+Co,+Phuong+10,+Tan+Binh,+Ho+Chi+Minh,+Vietnam"
+               target="_blank"
+               class="directions-button inline-block text-white font-semibold py-4 px-10 rounded-lg shadow-lg mb-6">
+                Chỉ Đường
+            </a>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 2.7s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--heading-color);">Khoảnh Khắc Của Chúng Tôi</h2>
+            <div class="gallery-container" id="gallery">
+                <!-- 2 hàng sẽ được thêm bằng JavaScript -->
+                <div class="gallery-row" id="row1"></div>
+                <div class="gallery-row" id="row2"></div>
+            </div>
+        </section>
+
+        <!-- Modal phóng to -->
+        <div id="modal" class="modal-overlay">
+            <span class="close-button">&times;</span>
+            <img id="modal-image" class="modal-image" src="" alt="Ảnh phóng to">
+        </div>
+
+        <div class="section text-center mb-8 fade-in" style="animation-delay: 3s;">
+            <h3 class="text-2xl sm:text-3xl font-semibold mb-4" style="color: var(--heading-color);">Xác Nhận Tham Dự</h3>
+            <div class="form-container bg-white p-8 rounded-xl shadow-xl max-w-md mx-auto border border-gray-200">
+                <p class="mb-6 text-lg" style="color: var(--text-color-dark);">Vui lòng điền thông tin để xác nhận tham dự</p>
+                <form id="rsvpForm" autocomplete="off" class="space-y-5">
+                    <div>
+                        <label for="name" class="block text-left text-base font-medium" style="color: var(--text-color-dark);">Họ và Tên:</label>
+                        <input type="text" id="name" name="name" required class="w-full p-3.5 border border-gray-300 rounded-lg focus:ring-3 focus:ring-primary-color focus:border-transparent transition-all duration-200">
+                    </div>
+                    <div>
+                        <label for="guests" class="block text-left text-base font-medium" style="color: var(--text-color-dark);">Số người tham dự:</label>
+                        <input
+                            type="number"
+                            id="guests"
+                            name="guests"
+                            min="1"
+                            required
+                            inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            class="w-full p-3.5 border border-gray-300 rounded-lg focus:ring-3 focus:ring-primary-color focus:border-transparent transition-all duration-200"
+                        >
+                    </div>
+                    <div class="flex justify-center gap-5 mt-8">
+                        <button type="submit" class="rsvp-button text-white font-semibold py-3.5 px-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Gửi</button>
+                        <button type="button" onclick="cancelForm()" class="rsvp-button bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3.5 px-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 3.3s;">
+            <p class="text-base sm:text-lg" style="color: var(--text-color-dark);">Trân trọng kính mời quý khách đến chung vui cùng gia đình chúng tôi</p>
+            <p style="color: var(--accent-color);" class="text-base sm:text-lg">❤️ Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi ❤️</p>
+        </section>
+        <audio id="weddingMusic" autoplay loop>
+            <source src="Music/music.mp3" type="audio/mpeg">
+            Trình duyệt của bạn không hỗ trợ phát âm thanh.
+        </audio>
+
+        <div class="music-control" onclick="toggleMusic()">♫</div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var music = document.getElementById("weddingMusic");
+            music.volume = 0.3; // Set initial volume to 30%
+        });
+    </script>
+    <!-- Modal phóng to (đã được di chuyển lên trên) -->
+    <!-- <div id="modal" class="modal-overlay">
+        <span class="close-button">&times;</span>
+        <img id="modal-image" class="modal-image" src="" alt="Ảnh phóng to">
+    </div> -->
+
+    <script>
+        // Hiệu ứng tuyết/hoa rơi
+        /* Removed createSnow function as it's not needed with the flower animation from index.html */
+
+        // Đếm ngược thời gian
+        function updateCountdown() {
+            const weddingDate = new Date('2025-12-06T18:00:00+07:00').getTime();
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = 'Đã đến ngày trọng đại!';
+            }
+        }
+        setInterval(updateCountdown, 1000);
+      function toggleMusic() {
+            var music = document.getElementById("weddingMusic");
+            var musicIcon = document.querySelector(".music-control");
+            if (music.paused) {
+                music.play();
+                musicIcon.textContent = "♫";
+            } else {
+                music.pause();
+                musicIcon.textContent = "♫";
+            }
+        }
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbykWOllalbbKD1IuO9ptAAzBHpjaz2vr-YBJ-ugW_xta0a827BxBn8a0-eb_dmpa4vq/exec';
+ // Thay bằng URL web app từ Google Apps Script
+        const form = document.getElementById('rsvpForm');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        alert('Cảm ơn bạn! Xác nhận đã được gửi thành công.');
+                        form.reset();
+                    } else {
+                        alert('Đã xảy ra lỗi, vui lòng thử lại.');
+                    }
+                })
+                .catch(error => {
+                    alert('Lỗi: ' + error.message);
+                });
+        });
+
+        function cancelForm() {
+            form.reset();
+            alert('Đã hủy xác nhận.');
+        }
+         // Danh sách ảnh trong thư mục images
+        const images = [
+            'images/image1.jpg',
+            'images/image2.jpg',
+            'images/image3.jpg',
+            'images/image5.jpg',
+            'images/image6.jpg',
+            'images/image7.jpg',
+            'images/image8.jpg',
+            'images/image4.jpg',
+            'images/image9.jpg',
+            'images/image10.jpg',
+            'images/image11.jpg'
+            // Thêm các đường dẫn ảnh khác ở đây
+        ];
+
+       let currentIndex = 0;
+let rotationInterval;
+
+// Hiển thị gallery với hiệu ứng mờ
+async function displayGallery() {
+    const row1 = document.getElementById('row1');
+    const row2 = document.getElementById('row2');
+    
+    // Thêm hiệu ứng mờ trước khi thay đổi
+    row1.style.opacity = '0';
+    row2.style.opacity = '0';
+    
+    // Đợi hiệu ứng hoàn tất
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Xóa nội dung cũ
+    row1.innerHTML = '';
+    row2.innerHTML = '';
+    
+    // Thêm ảnh mới
+    for (let i = 0; i < 6; i++) {
+        const imgIndex = (currentIndex + i) % images.length;
+        const img = createThumbnail(images[imgIndex], imgIndex);
+        
+        if (i < 3) {
+            row1.appendChild(img);
+        } else {
+            row2.appendChild(img);
+        }
+    }
+    
+    // Hiện lại với hiệu ứng mờ
+    row1.style.opacity = '1';
+    row2.style.opacity = '1';
+}
+
+// Tạo thumbnail
+function createThumbnail(src, index) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.className = 'gallery-thumbnail';
+    img.alt = `Khoảnh khắc ${index + 1}`;
+    img.onerror = () => { img.src = 'https://via.placeholder.com/120x90?text=Ảnh+Lỗi'; };
+    
+    // Thêm sự kiện click để phóng to
+    img.addEventListener('click', () => openModal(src));
+    return img;
+}
+
+// Mở modal phóng to
+function openModal(src) {
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-image');
+    
+    modalImg.src = src;
+    modal.style.display = 'flex';
+    
+    // Đóng modal khi click × hoặc bên ngoài
+    document.querySelector('.close-button').onclick = () => {
+        modal.style.display = 'none';
+    };
+    
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+}
+
+// Tự động xoay ảnh
+function startRotation() {
+    // Dừng interval cũ nếu có
+    if (rotationInterval) clearInterval(rotationInterval);
+    
+    rotationInterval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % images.length;
+        displayGallery();
+    }, 25000);
+}
+// Preload tất cả ảnh khi trang load
+function preloadImages() {
+    images.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
+}
+// Tạm dừng khi hover
+function setupGalleryHover() {
+    const gallery = document.getElementById('gallery');
+    gallery.addEventListener('mouseenter', () => clearInterval(rotationInterval));
+    gallery.addEventListener('mouseleave', startRotation);
+}
+
+// Khởi tạo
+window.addEventListener('DOMContentLoaded', () => {
+    preloadImages();
+    displayGallery();
+    startRotation();
+});
+ // Đảm bảo DOM đã load xong
+document.addEventListener('DOMContentLoaded', function() {
+    // Đếm ngược thời gian
+    function updateCountdown() {
+        // Sử dụng timezone Việt Nam (UTC+7)
+        const weddingDate = new Date('2025-12-06T18:00:00+07:00').getTime();
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+
+        // Tính toán ngày, giờ, phút, giây
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Cập nhật giá trị lên DOM
+        document.getElementById('days').textContent = days;
+        document.getElementById('hours').textContent = hours;
+        document.getElementById('minutes').textContent = minutes;
+        document.getElementById('seconds').textContent = seconds;
+
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                document.querySelector('.countdown-container').innerHTML = 
+                '<div class="text-2xl font-bold py-4" style="color: var(--accent-color);">Đã đến ngày trọng đại!</div>';
+            }
+        }
+
+    // Chạy ngay lần đầu
+    updateCountdown();
+    
+    // Cập nhật mỗi giây
+    const countdownTimer = setInterval(updateCountdown, 1000);
+});
+    </script>
+</body>
+</html>

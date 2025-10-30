@@ -1,0 +1,247 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Mời Cưới</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="snow"></canvas>
+    <div class="container mx-auto p-4 sm:p-6">
+        <section class="text-center mb-8 fade-in">
+            <h1 class="text-4xl sm:text-5xl font-bold" style="color: var(--dark-gold);">Thiệp Mời Cưới</h1>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 0.3s;">
+            <h2 class="text-3xl sm:text-4xl font-semibold" style="color: var(--dark-gold);">Lê Cẩm Sung <span style="color: var(--brown-red);">❤</span> Lai Phương Bảo Anh</h2>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Nhà Trai -->
+            <div class="bg-white p-6 rounded-lg shadow-lg fade-in" style="animation-delay: 0.6s;">
+                <h3 class="text-2xl font-bold text-center" style="color: var(--brown-red);">Nhà Trai</h3>
+                
+                <div class="text-center space-y-4 family-info">
+                    <div>
+                        <p class="text-lg font-medium leading-tight">Ông: Lê Vĩ Anh</p>
+                        <p class="text-lg font-medium leading-tight">Bà: Huỳnh Ngọc Muổi</p>
+                        <p class="text-sm text-7a7a7a mt-1">Cha Mẹ</p>
+                    </div>
+                    
+                    <div class="border-t border-fce7f3 pt-4">
+                        <p class="text-xl font-semibold">Lê Cẩm Sung</p>
+                        <p class="text-sm text-7a7a7a mt-1">Út Nam</p>
+                    </div>
+                    
+                    <div class="border-t border-fce7f3 pt-4">
+                        <p class="text-5a5a5a leading-snug">
+                            301/27 Đường Kênh Tân Hóa,<br>
+                            Hòa Thạnh, Tân Phú,<br>
+                            TP.HCM
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nhà Gái -->
+            <div class="bg-white p-6 rounded-lg shadow-lg fade-in" style="animation-delay: 0.9s;">
+                <h3 class="text-2xl font-bold text-center" style="color: var(--brown-red);">Nhà Gái</h3>
+                
+                <div class="text-center space-y-4 family-info">
+                    <div>
+                        <p class="text-lg font-medium leading-tight">Ông: Lai Văn Trung</p>
+                        <p class="text-lg font-medium leading-tight">Bà: Trương Thị Phương</p>
+                        <p class="text-sm text-7a7a7a mt-1">Cha Mẹ</p>
+                    </div>
+                    
+                    <div class="border-t border-fce7f3 pt-4">
+                        <p class="text-xl font-semibold">Lai Phương Bảo Anh</p>
+                        <p class="text-sm text-7a7a7a mt-1">Út Nữ</p>
+                    </div>
+                    
+                    <div class="border-t border-fce7f3 pt-4">
+                        <p class="text-5a5a5a leading-snug">
+                            10/10 Tân Lập,<br>
+                            Đông Hòa, Dĩ An,<br>
+                            Bình Dương
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 1.2s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--brown-red);">Kính mời quý khách đến dự lễ thành hôn của chúng tôi</h2>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 1.5s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--brown-red);">Đếm ngược đến ngày trọng đại</h2>
+            <p class="text-base sm:text-xl mb-6 text-4a4a4a">06 tháng 12 năm 2025</p>
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <div class="countdown-value" id="days">0</div>
+                    <div class="countdown-label">Ngày</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="hours">0</div>
+                    <div class="countdown-label">Giờ</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="minutes">0</div>
+                    <div class="countdown-label">Phút</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="seconds">0</div>
+                    <div class="countdown-label">Giây</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 fade-in" style="animation-delay: 1.8s;">
+            <div class="text-center">
+                <span class="text-4xl sm:text-5xl" style="color: var(--dark-gold);">🕒</span> <!-- Biểu tượng đồng hồ -->
+                <p class="font-semibold text-base sm:text-lg text-4a4a4a">Đón khách</p>
+                <p class="text-base sm:text-lg text-5a5a5a">18:00</p>
+            </div>
+            <div class="text-center">
+                <span class="text-4xl sm:text-5xl" style="color: var(--dark-gold);">🥂</span> <!-- Biểu tượng ly rượu -->
+                <p class="font-semibold text-base sm:text-lg text-4a4a4a">Nhập tiệc</p>
+                <p class="text-base sm:text-lg text-5a5a5a">19:00</p>
+            </div>
+            <div class="flex flex-col items-center -mt-1">
+                <img src="calendar.png" alt="Lịch ngày cưới" class="w-14 sm:w-16 mb-1" /> <!-- Tăng kích thước ảnh lịch -->
+                <p class="font-semibold text-sm sm:text-base leading-tight text-4a4a4a">Ngày</p>
+                <p class="text-sm sm:text-base leading-tight text-5a5a5a">06/12/2025</p>
+            </div>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 2.1s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--brown-red);">Thông tin lễ cưới</h2>
+            <p class="text-base sm:text-lg text-4a4a4a">Hôn lễ được tổ chức tại:</p>
+            <p class="font-semibold text-base sm:text-lg text-5a5a5a">Diamond Place II</p>
+            <p class="text-base sm:text-lg text-5a5a5a">584 Đ. Âu Cơ, Phường 10, Tân Bình, Hồ Chí Minh</p>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 2.4s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--brown-red);">Địa điểm tổ chức</h2>
+            <div class="google-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.630013287552!2d106.63298331474894!3d10.786521392319!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ed23c8077d3%3A0x7a6a9c89b0b9f7e4!2sDiamond%20Place%20II!5e0!3m2!1svi!2s!4v1698765432109"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination_place_id=ChIJ03cIHO0tCjER5Pe5sIl6ano&destination=584+Au+Co,+Phuong+10,+Tan+Binh,+Ho+Chi+Minh,+Vietnam"
+               target="_blank"
+               class="directions-button inline-block text-white font-semibold py-4 px-10 rounded-lg shadow-lg mb-6">
+                Chỉ Đường
+            </a>
+        </section>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 2.7s;">
+            <h2 class="text-2xl sm:text-3xl font-semibold" style="color: var(--brown-red);">Khoảnh Khắc Của Chúng Tôi</h2>
+            <div class="gallery-container" id="gallery">
+                <!-- 2 hàng sẽ được thêm bằng JavaScript -->
+                <div class="gallery-row" id="row1"></div>
+                <div class="gallery-row" id="row2"></div>
+            </div>
+        </section>
+
+        <!-- Modal phóng to -->
+        <div id="modal" class="modal-overlay">
+            <span class="close-button">&times;</span>
+            <img id="modal-image" class="modal-image" src="" alt="Ảnh phóng to">
+        </div>
+
+        <div class="section text-center mb-8 fade-in" style="animation-delay: 3s;">
+            <h3 class="text-2xl sm:text-3xl font-semibold" style="color: var(--brown-red);">Xác Nhận Tham Dự</h3>
+            <div class="form-container bg-white p-8 rounded-xl shadow-xl max-w-md mx-auto border border-gray-200">
+                <p class="mb-6 text-lg text-gray-700">Vui lòng điền thông tin để xác nhận tham dự</p>
+                <form id="rsvpForm" autocomplete="off" class="space-y-5">
+                    <div>
+                        <label for="name" class="block text-left text-base font-medium text-gray-800 mb-2">Họ và Tên:</label>
+                        <input type="text" id="name" name="name" required class="w-full p-3.5 border border-gray-300 rounded-lg focus:ring-3 focus:ring-primary-gold focus:border-transparent transition-all duration-200">
+                    </div>
+                    <div>
+                        <label for="guests" class="block text-left text-base font-medium text-gray-800 mb-2">Số người tham dự:</label>
+                        <input
+                            type="number"
+                            id="guests"
+                            name="guests"
+                            min="1"
+                            required
+                            inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            class="w-full p-3.5 border border-gray-300 rounded-lg focus:ring-3 focus:ring-primary-gold focus:border-transparent transition-all duration-200"
+                        >
+                    </div>
+                    <div class="flex justify-center gap-5 mt-8">
+                        <button type="submit" class="rsvp-button text-white font-semibold py-3.5 px-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Gửi</button>
+                        <button type="button" onclick="cancelForm()" class="text-gray-700 bg-gray-200 hover:bg-gray-300 font-semibold py-3.5 px-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <section class="text-center mb-8 fade-in" style="animation-delay: 3.3s;">
+            <p class="text-base sm:text-lg text-4a4a4a">Trân trọng kính mời quý khách đến chung vui cùng gia đình chúng tôi</p>
+            <p style="color: var(--brown-red);" class="text-base sm:text-lg">❤️ Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi ❤️</p>
+        </section>
+        <audio id="weddingMusic" autoplay loop>
+            <source src="Music/music.mp3" type="audio/mpeg">
+            Trình duyệt của bạn không hỗ trợ phát âm thanh.
+        </audio>
+
+        <div class="music-control" onclick="toggleMusic()" id="musicControl">🔊</div>
+    </div>
+    <!-- Modal phóng to (đã được di chuyển lên trên) -->
+    <!-- <div id="modal" class="modal-overlay">
+        <span class="close-button">&times;</span>
+        <img id="modal-image" class="modal-image" src="" alt="Ảnh phóng to">
+    </div> -->
+
+    <script src="script.js"></script>
+</body>
+</html>
