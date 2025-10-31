@@ -418,6 +418,33 @@
     z-index: 1001;
 }
 
+.navigation-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 1001;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.navigation-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.prev-button {
+    left: 20px;
+}
+
+.next-button {
+    right: 20px;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -490,7 +517,11 @@
         </section>
 
         <section class="text-center mb-8 fade-in" style="animation-delay: 0.3s;">
-            <h2 class="text-3xl sm:text-4xl font-semibold" style="color: var(--heading-color);">Lê Cẩm Sung <span style="color: var(--accent-color);">❤</span> Lai Phương Bảo Anh</h2>
+            <h2 class="text-4xl sm:text-5xl font-bold flex justify-center items-center" style="color: var(--heading-color);">
+                <span class="font-bold" style="display: inline-block;">Lê Cẩm Sung</span>
+                <span style="color: var(--accent-color); margin: 0 0.5rem; display: inline-block;">❤</span>
+                <span class="font-bold" style="display: inline-block; position: relative; left: 2px;">Lai Phương Bảo Anh</span>
+            </h2>
         </section>
 
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -628,6 +659,8 @@
         <div id="modal" class="modal-overlay">
             <span class="close-button">&times;</span>
             <img id="modal-image" class="modal-image" src="" alt="Ảnh phóng to">
+            <button id="prevButton" class="navigation-button prev-button">&#10094;</button>
+            <button id="nextButton" class="navigation-button next-button">&#10095;</button>
         </div>
 
         <div class="section text-center mb-8 fade-in" style="animation-delay: 3s;">
@@ -665,7 +698,7 @@
             <p style="color: var(--accent-color);" class="text-base sm:text-lg">❤️ Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi ❤️</p>
         </section>
         <audio id="weddingMusic" autoplay loop>
-            <source src="Music/ms.mp3.mp3" type="audio/mpeg">
+            <source src="Music/music.mp3" type="audio/mpeg">
             Trình duyệt của bạn không hỗ trợ phát âm thanh.
         </audio>
 
@@ -808,9 +841,29 @@ function createThumbnail(src, index) {
 function openModal(src) {
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modal-image');
-    
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    let currentImageIndex = images.indexOf(src);
     modalImg.src = src;
     modal.style.display = 'flex';
+
+    function showImage(index) {
+        modalImg.src = images[index];
+        currentImageIndex = index;
+    }
+
+    prevButton.onclick = (e) => {
+        e.stopPropagation(); // Prevent modal from closing
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        showImage(currentImageIndex);
+    };
+
+    nextButton.onclick = (e) => {
+        e.stopPropagation(); // Prevent modal from closing
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        showImage(currentImageIndex);
+    };
     
     // Đóng modal khi click × hoặc bên ngoài
     document.querySelector('.close-button').onclick = () => {
