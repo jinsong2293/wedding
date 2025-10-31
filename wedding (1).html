@@ -406,6 +406,13 @@
     max-height: 90%;
     border-radius: 8px;
     animation: fadeIn 0.3s;
+    cursor: default; /* Default for mobile */
+}
+
+@media (min-width: 769px) { /* For desktop */
+    .modal-image {
+        cursor: pointer; /* Indicate clickable on desktop */
+    }
 }
 
 .close-button {
@@ -417,42 +424,6 @@
     cursor: pointer;
     z-index: 1001;
 }
-
-/* Remove navigation button styles as they are no longer used */
-/*
-.navigation-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 24px;
-    z-index: 1001;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.navigation-button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-.prev-button {
-    left: 20px;
-}
-
-.next-button {
-    right: 20px;
-}
-
-@media (max-width: 768px) {
-    .navigation-button {
-        display: none;
-    }
-}
-*/
 
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -872,21 +843,28 @@ function openModal(src) {
     let touchEndX = 0;
 
     modalImg.addEventListener('touchstart', (e) => {
+        console.log('touchstart event fired');
+        e.preventDefault(); // Prevent default touch behavior
         touchStartX = e.touches[0].clientX;
     });
 
     modalImg.addEventListener('touchmove', (e) => {
+        console.log('touchmove event fired');
+        e.preventDefault(); // Prevent default touch behavior
         touchEndX = e.touches[0].clientX;
     });
 
     modalImg.addEventListener('touchend', () => {
+        console.log('touchend event fired');
         if (window.innerWidth <= 768) { // Only for mobile
             if (touchStartX - touchEndX > 50) { // Swiped left
+                console.log('Swiped left');
                 currentImageIndex = (currentImageIndex + 1) % images.length;
                 showImage(currentImageIndex);
             }
 
             if (touchEndX - touchStartX > 50) { // Swiped right
+                console.log('Swiped right');
                 currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
                 showImage(currentImageIndex);
             }
